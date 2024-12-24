@@ -5,6 +5,7 @@ services:
       - "172.17.0.1:9092:9092"  # docker 网关ip
     volumes:
       - "./data/kafka_data:/bitnami"
+    restart: always
     environment:
       # KRaft settings
       - KAFKA_CFG_NODE_ID=0
@@ -27,6 +28,7 @@ services:
       - REDIS_PASSWORD="238XSfh98xa"
     ports:
         - '127.0.0.1:6379:6379'
+    restart: always
     volumes:
       - './data/redis_data:/bitnami/redis/data'
     networks:
