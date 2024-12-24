@@ -1,0 +1,57 @@
+services:
+  kafka:
+    image: bitnami/kafka:3.9
+    ports:
+      - "172.17.0.1:9092:9092"  # docker 网关ip
+    volumes:
+      - "./data/kafka_data:/bitnami"
+    environment:
+      # KRaft settings
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      # Listeners
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://172.17.0.1:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+    networks:
+      - kf_network
+
+  redis:
+    image: bitnami/redis:4.0
+    environment:
+      # ALLOW_EMPTY_PASSWORD is recommended only for development.
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+      - REDIS_PASSWORD="238XSfh98xa"
+    ports:
+        - '127.0.0.1:6379:6379'
+    volumes:
+      - './data/redis_data:/bitnami/redis/data'
+    networks:
+      - kf_network
+
+  mysql:
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci --explicit_defaults_for_timestamp=true --lower_case_table_names=1
+    environment:
+      MYSQL_ROOT_PASSWORD: 124x8Xawdasdx1r140xs$
+    ports:
+      - '127.0.0.1:3306:3306'
+    image: mysql:5.7.43
+    labels:
+      createdBy: Apps
+    restart: always
+    volumes:
+      - ./data/mysql_data/:/var/lib/mysql
+      - ./my.cnf:/etc/mysql/my.cnf
+      - ./log:/var/log/mysql
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - kf_network
+
+
+networks:
+  kf_network:
+    external: true

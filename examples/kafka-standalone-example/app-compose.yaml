@@ -1,0 +1,11 @@
+version: '3.8'
+
+networks:
+  kafkatest:
+    external: true
+
+services:
+  kafkatest:
+    image: kafkatest
+    networks:
+      - kafkatest
